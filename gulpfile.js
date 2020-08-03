@@ -1,4 +1,4 @@
-const { src, dest } = require('gulp');
+const { src, dest, series } = require('gulp');
 const postcss = require('gulp-postcss');
 const gulpSass = require('gulp-sass');
 const autoprefixer = require('autoprefixer');
@@ -11,23 +11,32 @@ gulpSass.compiler = require('node-sass');
 const paths = {
   scss: {
     src: './src/scss/**/*.scss',
-    dest: './dist/css'
-  }
+    srcDest: './src/scss',
+    dest: './dist/css',
+  },
 };
 
 // Scssをコンパイルするタスク
 const scss = () => {
-  const plugins = [autoprefixer(), cssnano({ autoprefixer: false })];
+  const postCssPlugins = [autoprefixer(), cssnano({ autoprefixer: false })];
 
   return src(paths.scss.src)
-    .pipe(postcss([stylelint(), reporter()]))
     .pipe(
       gulpSass({
-        outputStyle: 'expanded'
+        outputStyle: 'expanded',
       }).on('error', gulpSass.logError)
     )
-    .pipe(postcss(plugins))
+    .pipe(postcss(postCssPlugins))
     .pipe(dest(paths.scss.dest));
 };
 
-exports.default = scss;
+// Scss をリントするタスク
+const lint = () => {
+  const postCssPlugins = [stylelint({ fix: true }), reporter()];
+
+  return src(paths.scss.src).pipe(postcss(postCssPlugins)).pipe(dest(paths.scss.srcDest));
+};
+
+exports.default = series(lint, scss);
+exports.scss = scss;
+exports.lint = lint;
