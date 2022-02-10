@@ -16,7 +16,7 @@
     "gulp-cli": "^2.2.0",
     "gulp-postcss": "^8.0.0",
     "gulp-sass": "^4.0.2",
-    "node-sass": "^4.14.1",
+    "node-sass": "^7.0.0",
     "postcss-reporter": "^6.0.1",
     "stylelint": "^11.0.0",
     "stylelint-config-recess-order": "^2.1.0",
